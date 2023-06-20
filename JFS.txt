@@ -1,0 +1,466 @@
+11111
+Display data.java
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.mysql.cj.jdbc.result.ResultSetMetaData;
+
+/**
+ * Servlet implementation class DisplayData
+ */
+@WebServlet("/DisplayData")
+public class DisplayData extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public DisplayData() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: ").append(request.getContextPath());
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+try {
+ System.out.println("One.......");
+ String dburl="jdbc:mysql://localhost:3306/bank";
+ String uname="root";
+ String pwd="";
+ System.out.println("One.......");
+ Class.forName("com.mysql.cj.jdbc.Driver");
+ System.out.println("two.......");
+ Connection con=DriverManager.getConnection(dburl,uname,pwd);
+ System.out.println("three.......");
+ PreparedStatement ps=con.prepareStatement("select * from marks where rollno=?"); 
+ ps.setInt(1,Integer.valueOf(request.getParameter("rollno"))); 
+ ResultSet rs=ps.executeQuery();
+			
+ response.setContentType("text/html"); 
+ PrintWriter out = response.getWriter(); 
+ out.print("<html><body><br>");
+ out.print("<table width=50% border=1>"); 
+ out.print("<caption>Result:</caption>");
+ out.print("<th>");
+ //get the tableheading 
+ ResultSetMetaData rsmd=(ResultSetMetaData) rs.getMetaData(); 
+ int total=rsmd.getColumnCount(); 
+ for(int i=0;i<total;i++)
+ {
+	out.print("<td>"+rsmd.getColumnName(i+1)+"</td>");
+} 
+ out.print("<td> Result </td>");
+ out.print("</th>");
+ out.print("<tr>");
+ Boolean pass=true;
+ while(rs.next())
+ {
+  out.print("<td>"+" </td>");
+  out.print("<td>"+rs.getInt(1)+"</td>");
+  out.print("<td>"+rs.getString(2)+"</td>");
+  out.print("<td>"+rs.getString(3)+"</td>");
+  out.print("<td>"+rs.getInt(4)+"</td>");
+  out.print("<td>"+rs.getInt(5)+"</td>");
+  out.print("<td>"+rs.getInt(6)+"</td>");
+  out.print("<td>"+rs.getInt(7)+"</td>");
+  out.print("<td>"+rs.getInt(8)+"</td>");
+  out.print("<td>"+rs.getInt(9)+"</td>");
+  out.print("<td>"+rs.getInt(10)+"</td>");
+  out.print("<td>"+rs.getInt(11)+"</td>");
+  for(int i=4;i<11;i++)
+      {
+	 //System.out.println("i:"+i+":"+rs.getInt(i));
+	 if(rs.getInt(i)<40)
+	  {
+		pass=false;
+		break;
+	  }
+	   }
+			}
+			if(pass)
+			{
+				out.print("<td> PASS </td>");
+				
+			}
+			else
+			{
+				out.print("<td> FAIL </td>");
+			}
+			out.print("</tr>");
+			out.print("</table>");
+			out.print("</html></body>");
+
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+}
+}
+
+Insert marks.java
+
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class InsertMarks
+ */
+@WebServlet("/InsertMarks")
+public class InsertMarks extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public InsertMarks() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: ").append(request.getContextPath());
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		try {
+			
+			System.out.println("One.......");
+			String dburl="jdbc:mysql://localhost:3306/bank";
+			String uname="root";
+			String pwd="";
+			System.out.println("One.......");
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			System.out.println("two.......");
+			Connection con=DriverManager.getConnection(dburl,uname,pwd);
+			System.out.println("three.......");
+			PreparedStatement st = con.prepareStatement("insert into marks values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			st.setInt(1, Integer.valueOf(request.getParameter("rollno")));
+			st.setString(2, request.getParameter("name"));
+			st.setString(3, request.getParameter("section"));
+			st.setInt(4, Integer.valueOf(request.getParameter("sub1")));
+			st.setInt(5, Integer.valueOf(request.getParameter("sub2")));
+			st.setInt(6, Integer.valueOf(request.getParameter("sub3")));
+			st.setInt(7, Integer.valueOf(request.getParameter("sub4")));
+			st.setInt(8, Integer.valueOf(request.getParameter("sub5")));
+			st.setInt(9, Integer.valueOf(request.getParameter("sub6")));
+			st.setInt(10, Integer.valueOf(request.getParameter("lab1")));
+			st.setInt(11, Integer.valueOf(request.getParameter("lab2")));
+			st.executeUpdate();
+			st.close();
+			con.close();
+			System.out.println("four.......");
+			PrintWriter out = response.getWriter();
+out.println("<html><body><h3>Successfully Inserted</h3></body></html>");
+ 
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+}
+
+22222
+
+<%@ page import="java.sql.*" %>
+<%@ page import="javax.sql.*" %>
+<%@ page import="javax.naming.*" %>
+<%@ page import="javax.servlet.*" %>
+<%@ page import="javax.servlet.http.*" %>
+<%@ page import="java.io.*" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Records</title>
+</head>
+<body>
+    <h1>Student Records</h1>
+    
+    <h2>Store Student Information</h2>
+    <form action="student.jsp" method="post">
+        <label for="name">Name:</label>
+        <input type="text" name="name" required><br>
+        
+        <label for="age">Age:</label>
+        <input type="text" name="age" required><br>
+        
+        <label for="grade">Grade:</label>
+        <input type="text" name="grade" required><br>
+        
+        <input type="submit" value="Submit">
+    </form>
+    
+    <h2>List Student Records</h2>
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Grade</th>
+        </tr>
+        <% 
+            try {
+                // Database connection
+                Context initContext = new InitialContext();
+                Context envContext = (Context) initContext.lookup("java:/comp/env");
+                DataSource dataSource = (DataSource) envContext.lookup("jdbc/mydb");
+                Connection connection = dataSource.getConnection();
+                
+                // Store student information
+                if (request.getParameter("name") != null && request.getParameter("age") != null && request.getParameter("grade") != null) {
+                    String name = request.getParameter("name");
+                    int age = Integer.parseInt(request.getParameter("age"));
+                    String grade = request.getParameter("grade");
+                    
+                    PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO students (name, age, grade) VALUES (?, ?, ?)");
+                    insertStatement.setString(1, name);
+                    insertStatement.setInt(2, age);
+                    insertStatement.setString(3, grade);
+                    insertStatement.executeUpdate();
+                    insertStatement.close();
+                    
+                    response.sendRedirect("student.jsp");
+                }
+                
+                // List student records
+                Statement selectStatement = connection.createStatement();
+                ResultSet resultSet = selectStatement.executeQuery("SELECT * FROM students");
+                while (resultSet.next()) {
+                    String name = resultSet.getString("name");
+                    int age = resultSet.getInt("age");
+                    String grade = resultSet.getString("grade");
+                    
+                    out.println("<tr>");
+                    out.println("<td>" + name + "</td>");
+                    out.println("<td>" + age + "</td>");
+                    out.println("<td>" + grade + "</td>");
+                    out.println("</tr>");
+                }
+                resultSet.close();
+                selectStatement.close();
+                
+                // Close database connection
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        %>
+    </table>
+</body>
+</html>
+secand wale kam hai
+
+
+3333
+
+Problem statement : MVC
+
+index.jsp(View)
+<formaction="ControllerServlet"method="post">
+Name:<inputtype="text"name="name"><br>
+Password:<inputtype="password"name="password"><br>
+<inputtype="submit"value="login">
+</form>
+LoginBean.java(Model)
+packagecom.pu;
+importjava.lang.*;
+publicclassLoginBean {
+private String name,password; 
+public String getName() { 
+returnname; 
+} 
+publicvoidsetName(String name) { 
+this.name = name; 
+} 
+public String getPassword() { 
+returnpassword; 
+} 
+publicvoidsetPassword(String password) { 
+this.password = password; 
+} 
+publicbooleanvalidate(){ 
+if(password.equals("admin")){ 
+returntrue; 
+} 
+else{
+returnfalse; 
+} 
+} 
+}
+
+
+login-success.jsp(view)
+<%@pageimport="com.pu.LoginBean"%>
+<p>You are successfully logged in!</p>
+<%
+LoginBean bean=(LoginBean)request.getAttribute("bean"); 
+out.print("Welcome, "+bean.getName()); 
+%>
+
+
+login-error.jsp(View)
+<p>Sorry! username or password error</p>
+<%@includefile="index.jsp"%>
+
+ControllerServlet.java(Controller)
+response.setContentType("text/html");
+PrintWriterout=response.getWriter();
+String name=request.getParameter("name");
+String password=request.getParameter("password");
+LoginBeanbean=newLoginBean();
+bean.setName(name);
+bean.setPassword(password);
+request.setAttribute("bean",bean);
+booleanstatus=bean.validate();
+if(status){
+RequestDispatcherrd=request.getRequestDispatcher("login-success.jsp");
+rd.forward(request,response);
+}
+else{
+RequestDispatcherrd=request.getRequestDispatcher("login-error.jsp");
+rd.forward(request,response);
+}
+
+4444
+
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Information</title>
+</head>
+<body>
+    <%-- Form to store student information --%>
+    <h2>Enter Student Information</h2>
+    <form method="post" action="storeStudent.jsp">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="rollNo">Roll No:</label>
+        <input type="text" id="rollNo" name="rollNo" required><br><br>
+        <label for="course">Course:</label>
+        <input type="text" id="course" name="course" required><br><br>
+        <input type="submit" value="Submit">
+    </form>
+    
+    <%-- Form to search for student details --%>
+    <h2>Search Student</h2>
+    <form method="get" action="searchStudent.jsp">
+        <label for="searchRollNo">Enter Roll No:</label>
+        <input type="text" id="searchRollNo" name="searchRollNo" required>
+        <input type="submit" value="Search">
+    </form>
+</body>
+</html>
+
+Storing Student Information
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*" %>
+<%-- Establishing database connection --%>
+<%
+    String url = "jdbc:mysql://localhost:3306/studentdb";
+    String username = "your_username";
+    String password = "your_password";
+    Connection conn = null;
+    try {
+        Class.forName("com.mysql.jdbc.Driver");
+        conn = DriverManager.getConnection(url, username, password);
+    } catch (ClassNotFoundException | SQLException e) {
+        e.printStackTrace();
+    }
+%>
+
+<%-- Storing student information into the database --%>
+<%
+    String name = request.getParameter("name");
+    String rollNo = request.getParameter("rollNo");
+    String course = request.getParameter("course");
+
+    String query = "INSERT INTO students (name, rollNo, course) VALUES (?, ?, ?)";
+    PreparedStatement pstmt = conn.prepareStatement(query);
+    pstmt.setString(1, name);
+    pstmt.setString(2, rollNo);
+    pstmt.setString(3, course);
+    pstmt.executeUpdate();
+
+    pstmt.close();
+    conn.close();
+%>
+
+<h2>Student Information Stored Successfully!</h2>
+
+Searching for Student Details (searchStudent.jsp):
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*" %>
+<%-- Establishing database connection --%>
+<%
+    String url = "jdbc:mysql://localhost:3306/studentdb";
+    String username = "your_username";
+    String password = "your_password";
+    Connection conn = null;
+    try {
+        Class.forName("com.mysql.jdbc.Driver");
+        conn = DriverManager.getConnection(url, username, password);
+    } catch (ClassNotFoundException | SQLException e) {
+        e.printStackTrace();
+    }
+%>
+
+<%-- Searching for student details in the database --%>
+<%
+    String searchRollNo = request.getParameter("searchRollNo");
+   
+
+
+
+
+
+
